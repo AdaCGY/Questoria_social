@@ -32,9 +32,9 @@
            <li><RouterLink :to="{ path: '/', hash: '#heroQS' }">首頁</RouterLink></li>
   <li><RouterLink :to="{ path: '/', hash: '#aboutQS' }">關於我們</RouterLink></li>
   <li><RouterLink :to="{ path: '/', hash: '#contactQS' }">聯絡我們</RouterLink></li>
-  <li><router-link :to="{ name: '會員中心' }">會員中心</router-link></li>
-  <li><router-link :to="{ name: '購物' }">購物</router-link></li>
-  <li><router-link :to="{ name: '任務' }">任務</router-link></li>
+  <li><router-link :to="{ path: '/', hash: '#featuresQS' }">會員中心</router-link></li>
+  <li><router-link :to="{ name: 'shop' }">購物</router-link></li>
+  <li><router-link :to="{ name: 'task' }">任務</router-link></li>
           </ul>
         </div>
 

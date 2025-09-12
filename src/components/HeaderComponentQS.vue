@@ -17,7 +17,7 @@
         <li><RouterLink :to="{ path: '/', hash: '#heroQS' }">首頁</RouterLink></li>
   <li><RouterLink :to="{ path: '/', hash: '#aboutQS' }">關於我們</RouterLink></li>
   <li><RouterLink :to="{ path: '/', hash: '#featuresQS' }">會員中心</RouterLink></li>
-  <li><RouterLink :to="{ path: '/', hash: '#servicesQS' }">論壇</RouterLink></li>
+  <li><RouterLink to="/forum">論壇</RouterLink></li>
   <li><RouterLink :to="{ path: '/', hash: '#contactQS' }">聯絡我們</RouterLink></li>
           <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>

@@ -3,7 +3,7 @@ import HomeView from "./views/HomeView.vue";
 import Member from "./views/member/Member.vue";
 import Shop from "./views/Shop.vue";
 import Task from "./views/Task.vue";
-import Social from "./views/Social.vue";
+import Social from "./views/social/Social.vue";
 import NotFound from "./views/NotFound.vue";
 import Profile from "./views/member/Profile.vue";
 import Notifications from "./views/Notifications.vue";
@@ -55,10 +55,10 @@ const routes = [
     },
 
     {
-        path: "/social", component: Social, name: "social", meta: {
+        path: "/forum", component: Social, name: "forum", meta: {
             layout: 'quickStarterPage',
-            title: '社交平台',
-            breadcrumb: ['Home', 'Social']
+            title: '論壇',
+            breadcrumb: ['Home', 'forum']
         }
     },
 
