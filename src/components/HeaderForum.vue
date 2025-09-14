@@ -48,10 +48,11 @@ import { RouterLink } from 'vue-router'
               <span class="d-none d-sm-inline">我的帳號</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuForum">
-                <li><RouterLink class="dropdown-item" to="/my-posts">我的文章</RouterLink></li>
-                <li><RouterLink class="dropdown-item" to="/favorites">收藏貼文</RouterLink></li>
+                <li><RouterLink class="dropdown-item" :to="{ path: '/forum', query: { view: 'my' } }">我的文章</RouterLink></li>
+                <li><RouterLink class="dropdown-item" :to="{ path: '/forum', query: { view: 'fav' } }">收藏貼文</RouterLink></li>
+                <li><RouterLink class="dropdown-item" :to="{ path: '/settings' }">設定</RouterLink></li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><RouterLink class="dropdown-item text-danger" to="/logout">登出</RouterLink></li>
+                <li><RouterLink class="dropdown-item text-danger" :to="{ path: '/logout' }">登出</RouterLink></li>
             </ul>
 
           </div>
