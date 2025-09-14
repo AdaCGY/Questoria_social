@@ -55,12 +55,19 @@ const routes = [
     },
 
     {
-        path: "/forum", component: Social, name: "forum", meta: {
-            layout: 'quickStarterPage',
-            title: '論壇',
-            breadcrumb: ['Home', 'forum']
+        path: "/forum",
+        component: Social,
+        name: "forum",
+        meta: {
+          layout: 'quickStarterPage',
+          header: 'Forum',            // ← 只有這頁會套論壇版 header
+          pageTitle: '論壇',
+          breadcrumb: ['Home', 'forum'],
+          showHero: false             // 若不想要上方大白灰區就設 false
         }
     },
+
+
 
 
 
