@@ -12,7 +12,7 @@
             d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284..."
             fill="currentColor" />
         </svg>
-        <span class="fs-4">DailyQuest</span>
+        <span class="fs-4">Questoria</span>
       </a>
       <nav>
           <router-link to="/">首頁</router-link>||

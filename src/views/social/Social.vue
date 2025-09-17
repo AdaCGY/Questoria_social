@@ -150,9 +150,9 @@ function boardName(id) {
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
           <div>
-          <h2 class="h6 mb-0">{{ p.title }}</h2>
+          <h2 class="sitename">{{ p.title }}</h2>
         </div>
-        <small class="text-muted">{{ fmtTime(p.createdAt) }}</small>
+        <small class="period">{{ fmtTime(p.createdAt) }}</small>
       </div>
           <p class="text-secondary mt-2 mb-2 text-truncate">{{ p.content }}</p>
           <div class="d-flex gap-3 text-muted small">

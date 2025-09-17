@@ -1,7 +1,7 @@
 <template>
   <footer class="site-footer">
     <div class="footer-container">
-      <p>© 2025 DailyQuest. All rights reserved.</p>
+      <p>© 2025 Questoria. All rights reserved.</p>
       <div class="footer-links">
         <router-link to="/privacy">隱私權政策</router-link>
         <router-link to="/terms">使用條款</router-link>

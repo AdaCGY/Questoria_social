@@ -11,6 +11,8 @@ import Analysis from "./views/member/Analysis.vue";
 import Setting from "./views/Setting.vue";
 import Login from "./views/member/Login.vue";
 import Register from "./views/member/Register.vue";
+import CreatePost from "./views/social/CreatePost.vue"
+
 
 
 
@@ -67,6 +69,18 @@ const routes = [
         }
     },
 
+    // 新增貼文
+    {
+      path: "/forum/create",
+      component: CreatePost,
+      name: "createPost",
+      meta: {
+        layout: 'quickStarterPage',
+        header: 'Forum',
+        title: '新增貼文',
+        breadcrumb: ['Home', 'forum', 'Create']
+      }
+    },
 
 
 

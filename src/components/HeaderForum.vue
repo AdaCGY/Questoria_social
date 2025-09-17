@@ -1,6 +1,8 @@
 <!-- src/components/HeaderForum.vue -->
 <script setup>
 import { RouterLink } from 'vue-router'
+import { ElIcon } from 'element-plus'
+import { UserFilled } from '@element-plus/icons-vue'
 </script>
 
 <template>
@@ -10,7 +12,9 @@ import { RouterLink } from 'vue-router'
       <!-- 左：品牌（導回首頁） -->
       <RouterLink class="navbar-brand fw-bold d-flex align-items-center" to="/">
         <!-- 想放圖標可在這裡加 <img> -->
-        <span class="fs-4">Questoria 論壇</span>
+        <h2>
+          <span class="sitename">FORUM</span>
+        </h2>
       </RouterLink>
 
       <button
@@ -44,8 +48,8 @@ import { RouterLink } from 'vue-router'
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <span class="rounded-circle me-2 d-inline-block" style="width:26px;height:26px;background:#6c757d;"></span>
-              <span class="d-none d-sm-inline">我的帳號</span>
+              <el-icon class="me-2"><UserFilled /></el-icon>
+              <span class="d-none d-sm-inline">Ada 您好</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuForum">
                 <li><RouterLink class="dropdown-item" :to="{ path: '/forum', query: { view: 'my' } }">我的文章</RouterLink></li>
@@ -57,8 +61,8 @@ import { RouterLink } from 'vue-router'
 
           </div>
 
-          <!-- 發文按鈕：帶 compose=1，論壇頁會自動展開發文區 -->
-          <RouterLink class="btn btn-primary" :to="{ path: '/forum', query: { compose: '1' } }">
+          <!-- 發文按鈕：直接進入新增貼文頁 -->
+          <RouterLink class="btn btn-primary" to="/forum/create">
             ＋ 發文
           </RouterLink>
         </div>
