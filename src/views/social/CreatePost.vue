@@ -13,7 +13,12 @@ const content = ref('')
 // ====== 後端載入分類 ======
 const categories = ref([])
 onMounted(async () => {
-  categories.value = await api.getCategories()
+  try {
+    const res = await api.getCategories() 
+    categories.value = res.data
+  } catch (err) {
+    console.error('載入分類失敗:', err)
+  }
 })
 
 // ====== 送出表單 ======
@@ -27,11 +32,11 @@ const submitPost = async () => {
     title: title.value,
     categoryId: categoryId.value,
     postsContent: content.value,
-    memberId: 1 // TODO: 之後改成登入者 ID
+    memberId: 1 // TODO: 之後改成登入者 ID；目前預設 Ada
   }
 
   try {
-    await api.createPost(dto)
+    await api.createPost(dto)   
     alert('新增成功！')
     clearForm()
     router.push('/forum')
