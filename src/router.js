@@ -12,7 +12,7 @@ import Setting from "./views/Setting.vue";
 import Login from "./views/member/Login.vue";
 import Register from "./views/member/Register.vue";
 import CreatePost from "./views/social/CreatePost.vue"
-
+import PostDetail from "./views/social/PostDetail.vue"
 
 
 
@@ -82,6 +82,18 @@ const routes = [
       }
     },
 
+    // 貼文詳情
+    {
+        path: "/forum/posts/:id", 
+        component: PostDetail,
+        name: "postDetail",
+        meta: {
+          layout: 'quickStarterPage',
+          header: 'Forum',
+          title: '貼文詳情',
+          breadcrumb: ['Home', 'forum', 'PostDetail']
+        }
+    },
 
 
 
