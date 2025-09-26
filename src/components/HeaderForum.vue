@@ -7,12 +7,20 @@ import { currentUser } from '@/services/currentUser'
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg bg-white border-bottom py-3">
+  <nav class="navbar navbar-expand-lg light-background border-bottom py-3">
     <div class="container">
       <!-- 左：品牌（導回首頁） -->
-      <RouterLink class="navbar-brand fw-bold d-flex align-items-center" to="/">
-        <h2><span class="sitename">FORUM</span></h2>
-      </RouterLink>
+      <div class="navbar-brand fw-bold d-flex align-items-center">
+        <!-- 點圖片回首頁 -->
+        <RouterLink to="/" class="me-2 d-flex align-items-center">
+          <img src="@/assets/img/logo.png" alt="Logo" style="height: 40px;">
+        </RouterLink>
+      
+        <!-- 點文字回論壇首頁 -->
+        <RouterLink to="/forum" class="text-decoration-none">
+          <h2 class="m-0 sitename" style="font-size: 40px;">FORUM</h2>
+        </RouterLink>
+      </div>
 
       <!-- 右：登入後樣式 -->
       <div class="d-flex align-items-center gap-2">
