@@ -13,9 +13,11 @@ export default {
   createPost: (data) => instance.post("/Posts", data),
   updatePost: (id, data) => instance.put(`/Posts/${id}`, data),
   deletePost: (id) => instance.delete(`/Posts/${id}`),
+  getCommentsCount: (postId) => instance.get(`/Posts/${postId}/comments/count`),
 
   // 單篇詳閱
-  getPostDetail: (id, memberId) => instance.get(`/Posts/${id}/detail?memberId=${memberId}`),
+  getPostDetail: (id, memberId) =>
+    instance.get(`/Posts/${id}/detail?memberId=${memberId}`),
 
   // 分類
   getCategories: () => instance.get("/PostCategories"),
@@ -25,28 +27,29 @@ export default {
   // ---------------------
   getComments: (postId) => instance.get(`/Comments/post/${postId}`),
   createComment: (data) => instance.post("/Comments", data),
+  updateComment: (id, data) => instance.put(`/Comments/${id}`, data),
   deleteComment: (id) => instance.delete(`/Comments/${id}`),
 
   // ---------------------
   // 貼文點讚
   // ---------------------
   likePost: (data) => instance.post("/PostsLikes", data),
-  unlikePost: (id) => instance.delete(`/PostsLikes/${id}`),
+  unlikePost: (postId, memberId) => instance.delete(`/PostsLikes/${postId}/${memberId}`),
   getPostLikes: (postId) => instance.get(`/PostsLikes/${postId}`),
 
   // ---------------------
   // 收藏貼文
   // ---------------------
   addFavorite: (data) => instance.post("/Favorites", data),
-  removeFavorite: (id) => instance.delete(`/Favorites/${id}`),
+  removeFavorite: (postId, memberId) => instance.delete(`/Favorites/${postId}/${memberId}`),
   getFavorites: (memberId) => instance.get(`/Favorites/member/${memberId}`),
 
   // ---------------------
   // 留言點讚
   // ---------------------
   likeComment: (data) => instance.post("/CommentLikes", data),
-  unlikeComment: (id) => instance.delete(`/CommentLikes/${id}`),
-  getCommentLikes: (commentId) => instance.get(`/CommentLikes/count/${commentId}`),
+  unlikeComment: (commentId, memberId) => instance.delete(`/CommentLikes/${commentId}/${memberId}`),
+  getCommentLikes: (commentId) =>instance.get(`/CommentLikes/count/${commentId}`),
 
   // ---------------------
   // 檢舉
@@ -55,5 +58,7 @@ export default {
   getReports: () => instance.get("/Reports"),
   getReportById: (id) => instance.get(`/Reports/${id}`),
   processReport: (data) => instance.put("/Reports/process", data),
+  getReportCategories: () => instance.get("/Reports/categories"),
 };
+
 
