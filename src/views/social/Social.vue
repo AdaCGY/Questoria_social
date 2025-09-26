@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api'
 import { currentUser } from '@/services/currentUser'
+import Swal from 'sweetalert2'
 
 const route = useRoute()
 
@@ -13,18 +14,51 @@ const posts = ref([])
 // TODO: 之後要串登入系統，目前使用假資料
 const memberId = currentUser.memberId
 
-// ====== 載入分類 + 貼文 ======
-onMounted(async () => {
-  try {
-    // 抓分類
-    const resCategories = await api.getCategories()
-    boards.value = resCategories.data.map(c => ({
-      id: c.categoryId,
-      name: c.categoryName,
-      desc: ''
-    }))
+// ====== 檢視模式 ======
+const viewMode = computed(() => {
+  const v = (route.query.view ?? route.meta.view ?? 'all').toString().toLowerCase()
+  return ['all', 'my', 'fav'].includes(v) ? v : 'all'
+})
+const showFilterBar = computed(() => viewMode.value === 'all')
+const simpleTitle = computed(() =>
+  viewMode.value === 'my' ? '我的文章' :
+  viewMode.value === 'fav' ? '收藏貼文' : ''
+)
 
-    // 抓貼文
+// ====== UI 狀態 ======
+const selectedBoard = ref(0)
+const search = ref('')
+const sortBy = ref('newest')
+
+// ====== 載入分類 ======
+const loadCategories = async () => {
+  const resCategories = await api.getCategories()
+  boards.value = resCategories.data.map(c => ({
+    id: c.categoryId,
+    name: c.categoryName,
+    desc: ''
+  }))
+}
+
+// ====== 載入文章（依模式切換） ======
+const loadPosts = async () => {
+  if (viewMode.value === 'fav') {
+    const resFav = await api.getFavorites(memberId)
+    posts.value = resFav.data.map(f => ({
+      id: f.postId,
+      title: f.postTitle,
+      content: f.postsContent,
+      createdAt: new Date(f.createdAt).getTime(),
+      boardId: f.categoryId,
+      categoryName: f.categoryName,
+      username: f.username,
+      like: f.likesCount,
+      commentsCount: f.commentsCount ?? 0,
+      postImage: f.postImage, // 收藏頁也帶圖片
+      mine: f.username === currentUser.username,
+      fav: true
+    }))
+  } else {
     const resPosts = await api.getPosts()
     posts.value = await Promise.all(resPosts.data.map(async p => {
       let likes = 0
@@ -44,30 +78,14 @@ onMounted(async () => {
         categoryName: p.categoryName,
         username: p.username,
         like: likes,
-        mine: p.memberId === memberId,   // 判斷是不是登入者文章
+        commentsCount: p.commentsCount ?? 0,
+        postImage: p.postImage, // 🔹 新增圖片欄位
+        mine: p.memberId === memberId,
         fav: false
       }
     }))
-  } catch (err) {
-    console.error("載入分類或貼文失敗:", err)
   }
-})
-
-// ====== 檢視模式 ======
-const viewMode = computed(() => {
-  const v = (route.query.view ?? route.meta.view ?? 'all').toString().toLowerCase()
-  return ['all', 'my', 'fav'].includes(v) ? v : 'all'
-})
-const showFilterBar = computed(() => viewMode.value === 'all')
-const simpleTitle = computed(() =>
-  viewMode.value === 'my' ? '我的文章' :
-  viewMode.value === 'fav' ? '收藏貼文' : ''
-)
-
-// ====== UI 狀態 ======
-const selectedBoard = ref(0)
-const search = ref('')
-const sortBy = ref('newest')
+}
 
 // ====== 篩選 + 排序 ======
 const filteredSorted = computed(() => {
@@ -75,9 +93,7 @@ const filteredSorted = computed(() => {
 
   if (viewMode.value === 'my') {
     rows = rows.filter(p => p.mine)
-  } else if (viewMode.value === 'fav') {
-    rows = rows.filter(p => p.fav)
-  } else {
+  } else if (viewMode.value === 'all') {
     if (selectedBoard.value !== 0) {
       rows = rows.filter(p => p.boardId === Number(selectedBoard.value))
     }
@@ -102,17 +118,53 @@ function fmtTime(ts) {
   try { return new Date(ts).toLocaleString() } catch { return '' }
 }
 
+// ====== 刪除文章 ======
 const deletePost = async (id) => {
-  if (!confirm('確定要刪除這篇文章嗎？')) return
+  const ok = confirm('確定要刪除這篇文章嗎？')
+  if (!ok) return
   try {
     await api.deletePost(id)
     posts.value = posts.value.filter(p => p.id !== id)
-    alert('刪除成功！')
+    Swal.fire('刪除成功！', '', 'success')
   } catch (err) {
-    alert('刪除失敗，請稍後再試')
+    Swal.fire('刪除失敗', '', 'error')
     console.error(err)
   }
 }
+
+// ====== 取消收藏 ======
+const removeFavorite = async (postId) => {
+  const ok = await Swal.fire({
+    title: '取消收藏確認',
+    text: '確定要取消收藏這篇文章嗎？',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6'
+  })
+
+  if (!ok.isConfirmed) return
+
+  try {
+    await api.removeFavorite(postId, memberId) 
+    posts.value = posts.value.filter(p => p.id !== postId)
+    Swal.fire('已取消收藏', '', 'success')
+  } catch (err) {
+    Swal.fire('取消收藏失敗', '', 'error')
+    console.error(err)
+  }
+}
+
+// ====== 初始化 + 監聽 ======
+onMounted(async () => {
+  await loadCategories()
+  await loadPosts()
+})
+watch(viewMode, async () => {
+  await loadPosts()
+})
 </script>
 
 <template>
@@ -150,31 +202,35 @@ const deletePost = async (id) => {
 
     <!-- 文章清單 -->
     <div class="vstack gap-3">
-      <div
-        v-for="p in filteredSorted"
-        :key="p.id"
-        class="card"
-      >
-        <!-- 點擊卡片任意地方跳文章詳閱 -->
+      <div v-for="p in filteredSorted" :key="p.id" class="card">
         <router-link
           :to="{ name: 'postDetail', params: { id: p.id } }"
           class="card-body text-decoration-none text-reset d-block"
         >
           <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h2 class="sitename">{{ p.title }}</h2>
-            </div>
+            <div><h3 class="sitename">{{ p.title }}</h3></div>
             <small class="period">{{ fmtTime(p.createdAt) }}</small>
           </div>
+
+          <!-- 縮圖 -->
+          <div v-if="p.postImage" class="mb-2">
+            <img 
+              :src="'data:image/png;base64,' + p.postImage"
+              class="img-fluid rounded"
+              style="max-height: 150px; object-fit: cover; width: 100%;"
+            >
+          </div>
+
           <p class="text-secondary mt-2 mb-2 text-truncate">{{ p.content }}</p>
           <div class="d-flex gap-3 text-muted small">
             <span>♥ {{ p.like ?? 0 }}</span>
+            <span>💬 {{ p.commentsCount ?? 0 }}</span>
             <span>看板：<strong>{{ p.categoryName }}</strong></span>
             <span>來自：{{ p.username }}</span>
           </div>
         </router-link>
 
-        <!-- ✅ 我的文章模式才顯示按鈕 -->
+        <!-- 我的文章模式 -->
         <div v-if="viewMode === 'my' && p.mine" class="card-footer d-flex justify-content-end gap-2">
           <router-link
             :to="{ name: 'createPost', query: { editId: p.id } }"
@@ -188,6 +244,17 @@ const deletePost = async (id) => {
             @click.prevent="deletePost(p.id)"
           >
             刪除
+          </button>
+        </div>
+
+        <!-- 收藏文章模式 -->
+        <div v-else-if="viewMode === 'fav'" class="card-footer d-flex justify-content-end">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-warning"
+            @click.prevent="removeFavorite(p.id)"
+          >
+            取消收藏
           </button>
         </div>
       </div>
@@ -222,6 +289,7 @@ const deletePost = async (id) => {
   border-radius: .375rem;
 }
 </style>
+
 
 
 
