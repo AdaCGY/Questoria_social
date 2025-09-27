@@ -218,10 +218,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container py-4" v-if="post">
-    <!-- 貼文標題 + 檢舉 -->
+  <div class="post-detail container py-4" v-if="post">
+    <!-- 標題 + 檢舉 -->
     <div class="d-flex justify-content-between align-items-start">
-      <h2 class="mb-0">{{ post.title }}</h2>
+      <h2>{{ post.title }}</h2>
       <button
         v-if="post.memberId !== memberId"
         class="btn btn-sm btn-light text-secondary"
@@ -231,22 +231,17 @@ onMounted(() => {
       </button>
     </div>
 
-    <!-- 文章資訊 -->
-    <p class="text-muted">
+    <!-- 作者資訊 -->
+    <p class="post-meta">
       作者：{{ post.username }} ｜ 看板：{{ post.categoryName }} ｜ 發佈時間：{{ new Date(post.createdAt).toLocaleString() }}
     </p>
 
     <!-- 文章內容 -->
-    <p style="white-space: pre-line;">{{ post.postsContent }}</p>
+    <div class="post-content">{{ post.postsContent }}</div>
 
-    <!-- 完整圖片 -->
-    <div v-if="post.postImage" class="my-3 text-center">
-      <img
-        :src="'data:image/png;base64,' + post.postImage"
-        alt="文章圖片"
-        class="img-fluid rounded border"
-        style="max-height: 500px; object-fit: contain;"
-      >
+    <!-- 圖片 -->
+    <div v-if="post.postImage" class="post-image">
+      <img :src="'data:image/png;base64,' + post.postImage" alt="文章圖片" />
     </div>
 
     <!-- 貼文互動 -->
@@ -339,3 +334,41 @@ onMounted(() => {
     <p class="text-muted">載入中...</p>
   </div>
 </template>
+
+<style scoped>
+/* ===== 文章詳閱頁置中 + 美化 ===== */
+.post-detail {
+  max-width: 900px;   /* 限制文章寬度 */
+  margin: 0 auto;     /* 水平置中 */
+}
+
+.post-detail h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.post-meta {
+  font-size: 0.9rem;
+  color: #6c757d; /* text-muted 顏色 */
+  margin-bottom: 1.5rem;
+}
+
+.post-content {
+  font-size: 1.05rem;
+  line-height: 1.7;     /* 行高 */
+  white-space: pre-line; /* 保留換行 */
+  margin-bottom: 1.5rem;
+}
+
+.post-image {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+.post-image img {
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+</style>

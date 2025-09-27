@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import api from '@/services/api'
 import { currentUser } from '@/services/currentUser'
 import Swal from 'sweetalert2'
+import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/el-pagination.css'
 
 const route = useRoute()
 
@@ -30,6 +32,10 @@ const selectedBoard = ref(0)
 const search = ref('')
 const sortBy = ref('newest')
 
+// ====== 分頁狀態 ======
+const currentPage = ref(1)
+const pageSize = ref(10)
+
 // ====== 載入分類 ======
 const loadCategories = async () => {
   const resCategories = await api.getCategories()
@@ -54,7 +60,7 @@ const loadPosts = async () => {
       username: f.username,
       like: f.likesCount,
       commentsCount: f.commentsCount ?? 0,
-      postImage: f.postImage, // 收藏頁也帶圖片
+      postImage: f.postImage,
       mine: f.username === currentUser.username,
       fav: true
     }))
@@ -79,7 +85,7 @@ const loadPosts = async () => {
         username: p.username,
         like: likes,
         commentsCount: p.commentsCount ?? 0,
-        postImage: p.postImage, // 🔹 新增圖片欄位
+        postImage: p.postImage,
         mine: p.memberId === memberId,
         fav: false
       }
@@ -112,6 +118,13 @@ const filteredSorted = computed(() => {
     rows.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
   }
   return rows
+})
+
+// ====== 分頁後的文章 ======
+const pagedPosts = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return filteredSorted.value.slice(start, end)
 })
 
 function fmtTime(ts) {
@@ -165,6 +178,9 @@ onMounted(async () => {
 watch(viewMode, async () => {
   await loadPosts()
 })
+watch(currentPage, () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+})
 </script>
 
 <template>
@@ -202,7 +218,7 @@ watch(viewMode, async () => {
 
     <!-- 文章清單 -->
     <div class="vstack gap-3">
-      <div v-for="p in filteredSorted" :key="p.id" class="card">
+      <div v-for="p in pagedPosts" :key="p.id" class="card">
         <router-link
           :to="{ name: 'postDetail', params: { id: p.id } }"
           class="card-body text-decoration-none text-reset d-block"
@@ -263,6 +279,16 @@ watch(viewMode, async () => {
         沒有符合條件的文章。
       </div>
     </div>
+
+    <!-- 分頁器 -->
+    <div class="d-flex justify-content-center mt-4">
+      <el-pagination
+        v-model:current-page="currentPage"
+        :page-size="pageSize"
+        :total="filteredSorted.length"
+        layout="prev, pager, next"
+      />
+    </div>
   </div>
 </template>
 
@@ -288,7 +314,31 @@ watch(viewMode, async () => {
   border: 1px solid #dee2e6;
   border-radius: .375rem;
 }
+
+/* 卡片大小 */
+.card {
+  min-width: 1000px;
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  padding: 8px;
+  margin-bottom: 0;
+  font-size: 1rem;
+}
+
+.card img {
+  max-height: 180px;
+  object-fit: cover;
+}
+
+/* 搜尋列 */
+.filter-bar {
+  max-width: 1000px;
+  margin: 0 auto 20px;
+  padding: 12px 16px;
+  font-size: 1rem;
+}
 </style>
+
 
 
 
