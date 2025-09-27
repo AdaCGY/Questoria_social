@@ -46,7 +46,6 @@ import { currentUser } from '@/services/currentUser'
                 收藏貼文
               </RouterLink>
             </li>
-            <li><RouterLink class="dropdown-item" :to="{ path: '/settings' }">設定</RouterLink></li>
             <li><hr class="dropdown-divider" /></li>
             <li>
               <RouterLink class="dropdown-item text-danger" :to="{ path: '/logout' }">登出</RouterLink>
