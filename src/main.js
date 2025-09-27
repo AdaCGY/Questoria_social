@@ -15,5 +15,5 @@ const app = createApp(App)
 app.use(router) //讓vue應用程式使用vue-router
 const pinia = createPinia();
 app.use(pinia); //讓vue應用程式使用pinia
-
+app.use(ElementPlus)
 app.mount('#app')
